@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Hug System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Comic Sans MS", "Trebuchet MS", cursive, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffe3ec, #fff4c7, #e4d7ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      color: #4b2354;
+      padding: 20px;
+    }
+
+    .card {
+      width: min(92vw, 520px);
+      background: rgba(255, 255, 255, 0.85);
+      border: 3px solid #ff9ecb;
+      border-radius: 28px;
+      padding: 34px 24px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(255, 123, 172, 0.35);
+      position: relative;
+      z-index: 2;
+      animation: floaty 3s ease-in-out infinite;
+    }
+
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 1.15rem;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+
+    .question {
+      font-size: 1.45rem;
+      font-weight: bold;
+      margin: 20px 0 24px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      min-height: 70px;
+      align-items: center;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 14px 24px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+    }
+
+    #yesBtn {
+      background: #ff5fa2;
+      color: white;
+    }
+
+    #yesBtn:hover {
+      background: #ff2f89;
+      transform: scale(1.08);
+    }
+
+    #noBtn {
+      background: #ffffff;
+      color: #ff4f94;
+      border: 2px solid #ff9ecb;
+      position: relative;
+    }
+
+    #noBtn:hover {
+      transform: rotate(-5deg) scale(0.95);
+    }
+
+    .tiny-note {
+      font-size: 0.9rem;
+      opacity: 0.75;
+      margin-top: 18px;
+    }
+
+    .final-screen {
+      display: none;
+    }
+
+    .hug {
+      font-size: 4.5rem;
+      margin: 18px 0;
+      animation: hugBounce 0.8s ease infinite alternate;
+    }
+
+    @keyframes hugBounce {
+      from { transform: scale(1) rotate(-2deg); }
+      to { transform: scale(1.15) rotate(2deg); }
+    }
+
+    .heart {
+      position: fixed;
+      top: -20px;
+      font-size: 22px;
+      animation: fall linear forwards;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .boom {
+      animation: boom 0.7s ease forwards;
+    }
+
+    @keyframes boom {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.25) rotate(2deg); }
+      70% { transform: scale(0.9) rotate(-2deg); }
+      100% { transform: scale(1); }
+    }
+
+    .shake {
+      animation: shake 0.35s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      50% { transform: translateX(8px); }
+      75% { transform: translateX(-5px); }
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.65rem; }
+      p { font-size: 1rem; }
+      .question { font-size: 1.2rem; }
+      button { font-size: 1rem; padding: 12px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="mainCard">
+    <div id="startScreen">
+      <h1>Hello, I am your cute girlfriend 💖</h1>
+      <p id="message">I have a very serious question for you.</p>
+      <div class="question">Do you want a hug? 🥺</div>
+
+      <div class="buttons">
+        <button id="yesBtn">Yes 🫂</button>
+        <button id="noBtn">No 😤</button>
+      </div>
+
+      <p class="tiny-note">Choose wisely, mister.</p>
+    </div>
+
+    <div class="final-screen" id="finalScreen">
+      <h1>HUG SUCCESSFULLY DELIVERED 💕</h1>
+      <div class="hug">🫂💖</div>
+      <p>You have been attacked by unlimited girlfriend hugs.</p>
+      <p>No refunds. No escape. Only love.</p>
+      <button onclick="location.reload()">Again? 🥰</button>
+    </div>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const message = document.getElementById("message");
+    const mainCard = document.getElementById("mainCard");
+    const startScreen = document.getElementById("startScreen");
+    const finalScreen = document.getElementById("finalScreen");
+
+    let yesSize = 1;
+    let yesClicks = 0;
+    let noClicks = 0;
+
+    const noMessages = [
+      "Noooooo whyyy? 😭",
+      "Excuse me??? Try again 😤",
+      "Are you sure you don't love me? 🥺",
+      "Wrong button, my love.",
+      "This is illegal behavior 🚨",
+      "My feelings are buffering... 💔",
+      "Okay fine, I will make the Yes button bigger.",
+      "You cannot escape the hug." 
+    ];
+
+    const yesMessages = [
+      "YAYYY I knew it 💖",
+      "More hug? 🥺",
+      "Bigger hug incoming...",
+      "Warning: girlfriend love overload!",
+      "Hug explosion loading... 💥"
+    ];
+
+    yesBtn.addEventListener("click", () => {
+      yesClicks++;
+      yesSize += 0.35;
+      yesBtn.style.transform = `scale(${yesSize})`;
+      yesBtn.textContent = yesClicks < 5 ? "YESSS 💖" : "BOOM HUG 💥";
+      message.textContent = yesMessages[Math.min(yesClicks - 1, yesMessages.length - 1)];
+      mainCard.classList.add("boom");
+      setTimeout(() => mainCard.classList.remove("boom"), 700);
+      makeHearts(12);
+
+      if (yesClicks >= 5) {
+        setTimeout(showFinalScreen, 600);
+      }
+    });
+
+    noBtn.addEventListener("click", () => {
+      noClicks++;
+      message.textContent = noMessages[Math.min(noClicks - 1, noMessages.length - 1)];
+      mainCard.classList.add("shake");
+      setTimeout(() => mainCard.classList.remove("shake"), 350);
+
+      yesSize += 0.22;
+      yesBtn.style.transform = `scale(${yesSize})`;
+
+      const x = Math.floor(Math.random() * 120) - 60;
+      const y = Math.floor(Math.random() * 80) - 40;
+      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${x / 4}deg) scale(${Math.max(0.5, 1 - noClicks * 0.08)})`;
+
+      if (noClicks >= 7) {
+        noBtn.textContent = "I give up 😭";
+        noBtn.style.opacity = "0.45";
+      }
+    });
+
+    function showFinalScreen() {
+      startScreen.style.display = "none";
+      finalScreen.style.display = "block";
+      makeHearts(80);
+    }
+
+    function makeHearts(count) {
+      const emojis = ["💖", "💕", "💗", "💘", "🥰", "🫂", "✨"];
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = 2 + Math.random() * 3 + "s";
+        heart.style.fontSize = 18 + Math.random() * 22 + "px";
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 5000);
+      }
+    }
+
+    setInterval(() => makeHearts(1), 900);
+  </script>
+</body>
+</html>
